@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import userModel from "../models/userModel.js";
-import transporter from "../config/nodemailer.js";
+import sendMail from "../config/nodemailer.js";
 export const register = async (req, res) => {
   const { name, email, password } = req.body;
   if (!name || !email || !password) {
@@ -30,13 +30,7 @@ export const register = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    const mailOptions = {
-      from: process.env.SENDER_EMAIL,
-      to: email,
-      subject: "Welcome to GG",
-      text: `Welcome to GG website. Your account has been created with email id: ${email}`,
-    };
-    await transporter.sendMail(mailOptions);
+    await sendMail(email, "Welcome to GG", `Welcome to GG website. Your account has been created with email id: ${email}`);
 
     return res.json({ success: true });
   } catch (error) {
@@ -109,13 +103,13 @@ export const sendVerifyOtp = async (req, res) => {
     user.verifyOtpExpireAt = Date.now() + 24 * 60 * 1000;
     await user.save();
 
-    const mailOptions = {
-      from: process.env.SENDER_EMAIL,
-      to: user.email,
-      subject: "Account Verification OTP",
-      text: `Your verification OTP is ${otp}. Verify your accout using this OTP.`,
-    };
-    await transporter.sendMail(mailOptions);
+    // const mailOptions = {
+    //   from: process.env.SENDER_EMAIL,
+    //   to: user.email,
+    //   subject: "Account Verification OTP",
+    //   text: `Your verification OTP is ${otp}. Verify your accout using this OTP.`,
+    // };
+    // await transporter.sendMail(mailOptions);
     res.json({ success: true, message: `verification OTP Sent on Email` });
   } catch (error) {
     res.json({ success: false, message: error.message });
@@ -175,13 +169,13 @@ export const sendResetOTP = async (req, res) => {
     user.resetOtpExpireAt = Date.now() + 15 * 60 * 1000;
     await user.save();
     
-    const mailOptions = {
-      from: process.env.SENDER_EMAIL,
-      to: user.email,
-      subject: "Password Reset OTP",
-      text: `Your OTP for resetting your password is ${otp}. Use this OTP to proceed with resetting your password.`,
-    };
-    await transporter.sendMail(mailOptions);
+    // const mailOptions = {
+    //   from: process.env.SENDER_EMAIL,
+    //   to: user.email,
+    //   subject: "Password Reset OTP",
+    //   text: `Your OTP for resetting your password is ${otp}. Use this OTP to proceed with resetting your password.`,
+    // };
+    // await transporter.sendMail(mailOptions);
     return res.json({success: true, message: "Reset OTP sent Succesfully"})
   } catch (error) {
     return res.json({ success: false, message: error.message });
