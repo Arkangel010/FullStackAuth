@@ -2,6 +2,8 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import userModel from "../models/userModel.js";
 import sendMail from "../config/nodemailer.js";
+import brevo from "@getbrevo/brevo";
+
 export const register = async (req, res) => {
   const { name, email, password } = req.body;
   if (!name || !email || !password) {
@@ -30,8 +32,19 @@ export const register = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    await sendMail(email, "Welcome to GG", `Welcome to GG website. Your account has been created with email id: ${email}`);
-
+   const client = new brevo.TransactionalEmailsApi();
+    client.setApiKey(
+      brevo.TransactionalEmailsApiApiKeys.apiKey,
+      process.env.BREVO_API_KEY
+    );
+    const emailData = {
+      sender: { email: process.env.SENDER_EMAIL, name: "GG Website" },
+      to: [{ email, name }],
+      subject: "Welcome to GG",
+      textContent: `Welcome to GG website. Your account has been created with email id: ${email}`,
+    };
+    
+    await client.sendTransacEmail(emailData);
     return res.json({ success: true });
   } catch (error) {
     res.status(200).json({ success: false, message: error.message });
