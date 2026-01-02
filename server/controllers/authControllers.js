@@ -130,7 +130,7 @@ export const sendVerifyOtp = async (req, res) => {
     );
     const emailData = {
       sender: { email: process.env.SENDER_EMAIL, name: "GG Website" },
-      to: [{ email, name }],
+      to: [{ user.email, name }],
       subject: "Account Verification OTP",
       textContent:`Your verification OTP is ${otp}. Verify your accout using this OTP.`,
     };
@@ -209,7 +209,7 @@ export const sendResetOTP = async (req, res) => {
     );
     const emailData = {
       sender: { email: process.env.SENDER_EMAIL, name: "GG Website" },
-      to: [{ email, name }],
+      to: [{ user.email, name }],
       subject: "Password Reset OTP",
       textContent: `Your OTP for resetting your password is ${otp}. Use this OTP to proceed with resetting your password.`,
     };
