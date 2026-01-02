@@ -123,6 +123,19 @@ export const sendVerifyOtp = async (req, res) => {
     //   text: `Your verification OTP is ${otp}. Verify your accout using this OTP.`,
     // };
     // await transporter.sendMail(mailOptions);
+     const client = new brevo.TransactionalEmailsApi();
+    client.setApiKey(
+      brevo.TransactionalEmailsApiApiKeys.apiKey,
+      process.env.BREVO_API_KEY
+    );
+    const emailData = {
+      sender: { email: process.env.SENDER_EMAIL, name: "GG Website" },
+      to: [{ email, name }],
+      subject: "Account Verification OTP",
+      textContent:`Your verification OTP is ${otp}. Verify your accout using this OTP.`,
+    };
+    
+    await client.sendTransacEmail(emailData);
     res.json({ success: true, message: `verification OTP Sent on Email` });
   } catch (error) {
     res.json({ success: false, message: error.message });
@@ -189,6 +202,20 @@ export const sendResetOTP = async (req, res) => {
     //   text: `Your OTP for resetting your password is ${otp}. Use this OTP to proceed with resetting your password.`,
     // };
     // await transporter.sendMail(mailOptions);
+     const client = new brevo.TransactionalEmailsApi();
+    client.setApiKey(
+      brevo.TransactionalEmailsApiApiKeys.apiKey,
+      process.env.BREVO_API_KEY
+    );
+    const emailData = {
+      sender: { email: process.env.SENDER_EMAIL, name: "GG Website" },
+      to: [{ email, name }],
+      subject: "Password Reset OTP",
+      textContent: `Your OTP for resetting your password is ${otp}. Use this OTP to proceed with resetting your password.`,
+    };
+    
+    await client.sendTransacEmail(emailData);
+    
     return res.json({success: true, message: "Reset OTP sent Succesfully"})
   } catch (error) {
     return res.json({ success: false, message: error.message });
